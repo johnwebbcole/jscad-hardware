@@ -26,9 +26,13 @@ include('node_modules/jscad-hardware/jscad-hardware.jscad');
 main() {
   util.init(CSG);
 
-  var BPlus = RaspberryPi.BPlus();
+  var bolt = Hardware.Bolt(
+    util.inch(1),
+    ImperialBolts['5/16 hex'],
+    'close'
+  )
 
-  return BPlus.combine();
+  return bolt.combine('head,thread');
 }
 ```
 
@@ -37,7 +41,7 @@ You can use the [yeoman jscad generator](https://www.npmjs.com/package/generator
 
 Once you create your project, install `jscad-hardware`, and run `gulp`.  Dragging the `dist` directory into [http://openjscad.org/](http://openjscad.org/) will include this library.
 
-Modify your `main.jscad` file to return a RaspberryPi object.
+Modify your `main.jscad` file to return a bolt object.
 
 ```javascript
 function main() {
