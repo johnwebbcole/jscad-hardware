@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>
+    <%= title %>
+  </title>
+  <script src="jquery.js"></script>
+  <script src="marked.min.js"></script>
+  <script src="jquery.hammer.js"></script>
+  <script src="lightgl.js"></script>
+  <script src="csg.js"></script>
+  <script src="formats.js"></script>
+  <script src="openjscad.js"></script>
+  <script src="openscad.js"></script>
+  <script src="jscad-worker.js"></script>
+  <script src="jscad-function.js"></script>
+  <link rel="stylesheet" href="layout.css" type="text/css">
+  <%= theme %>
+</head>
+
+<body onload="loadProcessor()">
+  <!-- setup display of the errors as required by OpenJSCAD.js -->
+  <div class="jscad-container">
+    <div id="header">
+      <div id="errordiv"></div>
+    </div>
+
+    <!-- setup display of the viewer, i.e. canvas -->
+    <div oncontextmenu="return false;" id="viewerContext"></div>
+
+    <!-- setup display of the design parameters, as required by OpenJSCAD.js -->
+    <!-- set display: block to display this -->
+    <div id="parametersdiv" style="display: none;"></div>
+
+    <!-- setup display of the status, as required by OpenJSCAD.js -->
+    <!-- set display: block to display this -->
+    <div id="tail">
+      <div id="statusdiv"></div>
+    </div>
+  </div>
+
+  <div id="README">
+    <%= readme %>
+  </div>
+
+  <!-- define the design and the parameters -->
+  <script type="text/javascript">
+    var gProcessor = null; // required by OpenJScad.org
+
+    function loadProcessor() {
+      var element = document.getElementById("viewerContext");
+      gProcessor = new OpenJsCad.Processor(element);
+      var filename = '<%= filename %>';
+      var xhr = new XMLHttpRequest();
+      gProcessor.setStatus("Loading " + filename);
+      xhr.open("GET", filename, true);
+      xhr.onload = function() {
+        var source = this.responseText;
+        gProcessor.setStatus("Processing " + filename);
+        gProcessor.setJsCad(source, filename);
+      }
+      xhr.send();
+    }
+  </script>
+
+</body>
+
+</html>

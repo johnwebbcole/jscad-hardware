@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>
+    jscad parts library for screws, washers and nuts
+  </title>
+  <script src="jquery.js"></script>
+  <script src="marked.min.js"></script>
+  <script src="jquery.hammer.js"></script>
+  <script src="lightgl.js"></script>
+  <script src="csg.js"></script>
+  <script src="formats.js"></script>
+  <script src="openjscad.js"></script>
+  <script src="openscad.js"></script>
+  <script src="jscad-worker.js"></script>
+  <script src="jscad-function.js"></script>
+  <link rel="stylesheet" href="layout.css" type="text/css">
+  <link rel="stylesheet" href="themes/architect/css/style.css" type="text/css">
+</head>
+
+<body onload="loadProcessor()">
+  <!-- setup display of the errors as required by OpenJSCAD.js -->
+  <div class="jscad-container">
+    <div id="header">
+      <div id="errordiv"></div>
+    </div>
+
+    <!-- setup display of the viewer, i.e. canvas -->
+    <div oncontextmenu="return false;" id="viewerContext"></div>
+
+    <!-- setup display of the design parameters, as required by OpenJSCAD.js -->
+    <!-- set display: block to display this -->
+    <div id="parametersdiv" style="display: none;"></div>
+
+    <!-- setup display of the status, as required by OpenJSCAD.js -->
+    <!-- set display: block to display this -->
+    <div id="tail">
+      <div id="statusdiv"></div>
+    </div>
+  </div>
+
+  <div id="README">
+    <p><a href="https://www.npmjs.org/package/jscad-hardware"><img src="http://img.shields.io/npm/v/jscad-hardware.svg" alt="view on npm" title="null"></a> <a href="https://www.npmjs.org/package/jscad-hardware"><img src="http://img.shields.io/npm/dt/jscad-hardware.svg" alt="npm module downloads" title="null"></a></p>
+<h1 id="jscad-hardware">jscad-hardware</h1>
+<p><img src="jscad-hardware.png" alt="bplus example" title="null"></p>
+<p>This is a collection of jscad parts that model a common Imperial and Metric bolts and washers.  These models use the <a href="https://github.com/johnwebbcole/jscad-utils">jscad-utils</a> library and return jscad-utils <a href="https://github.com/johnwebbcole/jscad-utils#utilgroupnames-objects--object"><code>group</code> objects</a>.</p>
+<h2 id="installation">Installation</h2>
+<p>Install <code>jscad-hardware</code> using NPM:</p>
+<pre><code class="lang-bash">npm install --save jscad-hardware
+</code></pre>
+<h2 id="basic-usage">Basic usage</h2>
+<p>To use the utilities, you need to include the <code>jscad-hardware.jscad</code>.</p>
+<pre><code class="lang-javascript">include(&#39;node_modules/jscad-utils/jscad-utils.jscad&#39;);
+include(&#39;node_modules/jscad-hardware/jscad-hardware.jscad&#39;);
+
+main() {
+  util.init(CSG);
+
+  var BPlus = RaspberryPi.BPlus();
+
+  return BPlus.combine();
+}
+</code></pre>
+<h2 id="yeoman-generator">Yeoman Generator</h2>
+<p>You can use the <a href="https://www.npmjs.com/package/generator-jscad">yeoman jscad generator</a> which will create a project that uses this library.</p>
+<p>Once you create your project, install <code>jscad-hardware</code>, and run <code>gulp</code>.  Dragging the <code>dist</code> directory into <a href="http://openjscad.org/">http://openjscad.org/</a> will include this library.</p>
+<p>Modify your <code>main.jscad</code> file to return a RaspberryPi object.</p>
+<pre><code class="lang-javascript">function main() {
+    util.init(CSG);
+
+    var bolt = Hardware.Bolt(
+      util.inch(1),
+      ImperialBolts[&#39;5/16 hex&#39;],
+      &#39;close&#39;
+    )
+
+    return bolt.combine(&#39;head,thread&#39;);
+}
+
+// include:js
+// endinject
+</code></pre>
+<p><img src="bolt.png" alt="bplus example" title="null"></p>
+
+  </div>
+
+  <!-- define the design and the parameters -->
+  <script type="text/javascript">
+    var gProcessor = null; // required by OpenJScad.org
+
+    function loadProcessor() {
+      var element = document.getElementById("viewerContext");
+      gProcessor = new OpenJsCad.Processor(element);
+      var filename = 'bolt.jscad';
+      var xhr = new XMLHttpRequest();
+      gProcessor.setStatus("Loading " + filename);
+      xhr.open("GET", filename, true);
+      xhr.onload = function() {
+        var source = this.responseText;
+        gProcessor.setStatus("Processing " + filename);
+        gProcessor.setJsCad(source, filename);
+      }
+      xhr.send();
+    }
+  </script>
+
+</body>
+
+</html>

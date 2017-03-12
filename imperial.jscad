@@ -1,0 +1,70 @@
+/* exported ImperialBolts, ImperialWashers */
+/**
+ * http://www.americanfastener.com/cap-screws/
+ * E - Body Diameter
+ * F - Width Across Flats
+ * G - Width Across Corners
+ * H - Head Height
+ * D - Head Diameter
+ * 
+ * tap sizes: https://littlemachineshop.com/reference/TapDrillSizes.pdf
+ * @type {Object}
+ */
+var ImperialBolts = {
+  '1/4 hex': {
+    name: '1/4 hex',
+    E: util.inch(0.25),
+    tap: util.inch(0.2010),
+    close: util.inch(0.2570),
+    loose: util.inch(0.2660),
+    H: util.inch(5 / 32),
+    G: util.inch(0.505),
+    F: util.inch(7 / 16),
+    type: 'HexHeadScrew'
+  },
+  '1/4 socket': {
+    name: '1/4 socket',
+    E: util.inch(0.25),
+    tap: util.inch(0.2010),
+    close: util.inch(0.2570),
+    loose: util.inch(0.2660),
+    H: util.inch(0.250),
+    D: util.inch(0.375),
+    type: 'PanHeadScrew'
+  },
+  '5/16 hex': {
+    name: '5/16 hex',
+    E: util.inch(0.3125),
+    tap: util.inch(0.2570),
+    close: util.inch(0.3230),
+    loose: util.inch(0.3320),
+    H: util.inch(0.203125),
+    G: util.inch(0.577), // 0.577-0.557
+    F: util.inch(0.5),
+    type: 'HexHeadScrew'
+  }
+};
+
+/**
+ * Imperial washer sizes
+ *
+ * @see http://almabolt.com/pages/catalog/washers/fender.htm
+ * @type {Object}
+ */
+var ImperialWashers = {
+  '1/4': {
+      od: util.inch(0.734),
+      id: util.inch(0.312),
+      thickness: util.inch(0.08) // .051/.080
+  },
+  '1/4 fender': {
+      od: util.inch(1.25),
+      id: util.inch(0.28125),
+      thickness: util.inch(0.08) // .051/.080
+  },
+  '5/16': {
+      od: util.inch(1.25),
+      id: util.inch(0.34375),
+      thickness: util.inch(0.08) // .051/.080
+  }
+};

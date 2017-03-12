@@ -1,0 +1,43 @@
+{
+  "name": "jscad-hardware",
+  "version": "1.0.0",
+  "description": "jscad parts library for screws, washers and nuts",
+  "main": "jscad-hardware.jscad",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "keywords": [
+    "jscad",
+    "hardware"
+  ],
+  "author": {
+    "name": "John Cole",
+    "email": "johnwebbcole@gmail.com",
+    "url": "http://github.com/johnwebbcole@gmail.com"
+  },
+  "homepage": "https://github.com/johnwebbcole/jscad-hardware",
+  "bugs": "https://github.com/johnwebbcole/jscad-hardware/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/johnwebbcole/jscad-hardware.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-eslint": "^3.0.1",
+    "gulp-inject": "^4.1.0",
+    "gulp-jscad-files": "^2.0.1",
+    "gulp-jsdoc-to-markdown": "^1.2.1",
+    "gulp-load-plugins": "^1.2.4",
+    "gulp-plumber": "^1.1.0",
+    "gulp-util": "^3.0.7",
+    "gulp-watch": "^4.3.6",
+    "gulp-openjscad-standalone": "^1.0.0"
+  },
+  "dependencies": {
+    "gulp-merge": "^0.1.1",
+    "jscad-utils": "^3.1.2"
+  }
+}
