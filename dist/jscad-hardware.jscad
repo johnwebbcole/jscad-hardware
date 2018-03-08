@@ -10,13 +10,13 @@
  * tap sizes: https://littlemachineshop.com/reference/TapDrillSizes.pdf
  * @type {Object}
  */
-var ImperialBolts = {
+ImperialBolts = {
   '1/4 hex': {
     name: '1/4 hex',
     E: util.inch(0.25),
-    tap: util.inch(0.2010),
-    close: util.inch(0.2570),
-    loose: util.inch(0.2660),
+    tap: util.inch(0.201),
+    close: util.inch(0.257),
+    loose: util.inch(0.266),
     H: util.inch(5 / 32),
     G: util.inch(0.505),
     F: util.inch(7 / 16),
@@ -25,19 +25,19 @@ var ImperialBolts = {
   '1/4 socket': {
     name: '1/4 socket',
     E: util.inch(0.25),
-    tap: util.inch(0.2010),
-    close: util.inch(0.2570),
-    loose: util.inch(0.2660),
-    H: util.inch(0.250),
+    tap: util.inch(0.201),
+    close: util.inch(0.257),
+    loose: util.inch(0.266),
+    H: util.inch(0.25),
     D: util.inch(0.375),
     type: 'PanHeadScrew'
   },
   '5/16 hex': {
     name: '5/16 hex',
     E: util.inch(0.3125),
-    tap: util.inch(0.2570),
-    close: util.inch(0.3230),
-    loose: util.inch(0.3320),
+    tap: util.inch(0.257),
+    close: util.inch(0.323),
+    loose: util.inch(0.332),
     H: util.inch(0.203125),
     G: util.inch(0.577), // 0.577-0.557
     F: util.inch(0.5),
@@ -53,20 +53,44 @@ var ImperialBolts = {
  */
 var ImperialWashers = {
   '1/4': {
-      od: util.inch(0.734),
-      id: util.inch(0.312),
-      thickness: util.inch(0.08) // .051/.080
+    od: util.inch(0.734),
+    id: util.inch(0.312),
+    thickness: util.inch(0.08) // .051/.080
   },
   '1/4 fender': {
-      od: util.inch(1.25),
-      id: util.inch(0.28125),
-      thickness: util.inch(0.08) // .051/.080
+    od: util.inch(1.25),
+    id: util.inch(0.28125),
+    thickness: util.inch(0.08) // .051/.080
   },
   '5/16': {
-      od: util.inch(1.25),
-      id: util.inch(0.34375),
-      thickness: util.inch(0.08) // .051/.080
+    od: util.inch(1.25),
+    id: util.inch(0.34375),
+    thickness: util.inch(0.08) // .051/.080
   }
+};
+
+// headDiameter, headLength, diameter, tap, countersink
+var ImperialWoodScrews = {
+  '#4': [util.inch(0.225), util.inch(0.067), util.inch(0.112)],
+  '#6': [util.inch(0.279), util.inch(0.083), util.inch(0.138)],
+  '#8': [util.inch(0.332), util.inch(0.1), util.inch(0.164)],
+  '#10': [util.inch(0.385), util.inch(0.116), util.inch(0.19)],
+  '#12': [util.inch(0.438), util.inch(0.132), util.inch(0.216)]
+};
+
+/**
+ * Dimensions of nuts for imperial bolts.
+ * F is the width across teh faces, C is the width
+ * across the points, and H is the height.  D is the
+ * basic diameter.
+ *
+ * [F, C, H, D]
+ *
+ * @see https://en.wikipedia.org/wiki/Nut_(hardware)
+ * @type {Object}
+ */
+var ImperialNuts = {
+  '1/4 hex': [11.113, 12.8, 5.56, 6.35]
 };
 
 /* exported Hardware */
@@ -87,7 +111,7 @@ var ImperialWashers = {
  * @module jscad-hardware
  * @exports Hardware
  */
-var Hardware = {
+Hardware = {
   Bolt: function Bolt(length, bolt, fit, BOM) {
     fit = fit || 'loose';
 
@@ -103,9 +127,13 @@ var Hardware = {
 
     b.add(
       Parts.Hardware
-        [
-          bolt.type
-        ]((bolt.G || bolt.D) + clearance, bolt.H + clearance, bolt[fit], length, length)
+        [bolt.type](
+          (bolt.G || bolt.D) + clearance,
+          bolt.H + clearance,
+          bolt[fit],
+          length,
+          length
+        )
         .map(part => part.color('red')),
       'tap',
       false,
@@ -114,27 +142,72 @@ var Hardware = {
 
     return b;
   },
-  
+
   /**
    * Create a washer group from a washer type.
    * @param {Object} washer Washer type object.
    * @param {String} fit    Clearance to add to group (tap|close|loose).
    */
   Washer: function Washer(washer, fit) {
-      var w = util.group();
-      w.add(Parts.Tube(washer.od, washer.id, washer.thickness).color('gray'), 'washer');
-      if (fit) {
-          var tap = Hardware.Clearances[fit];
-          if (!tap) console.error(`Hardware.Washer unknown fit clearance ${fit}, should be ${Object.keys(Hardware.Clarances).join('|')}`);
-          w.add(Parts.Cylinder(washer.od + Hardware.Clearances[fit], washer.thickness).color('red'), 'clearance');
-      }
-      return w;
+    var w = util.group();
+    w.add(
+      Parts.Tube(washer.od, washer.id, washer.thickness).color('gray'),
+      'washer'
+    );
+    if (fit) {
+      var tap = Hardware.Clearances[fit];
+      if (!tap)
+        console.error(
+          `Hardware.Washer unknown fit clearance ${fit}, should be ${Object.keys(
+            Hardware.Clarances
+          ).join('|')}`
+        );
+      w.add(
+        Parts.Cylinder(
+          washer.od + Hardware.Clearances[fit],
+          washer.thickness
+        ).color('red'),
+        'clearance'
+      );
+    }
+    return w;
   },
-  
+
+  Nut: function Nut(nut, fit) {
+    return Parts.Hexagon(nut[1] + Hardware.Clearances[fit], nut[2]);
+  },
+
+  Screw: {
+    PanHead: function(type, length, fit, options = {}) {
+      var [headDiameter, headLength, diameter, tap, countersink] = type;
+      return Hardware.PanHeadScrew(
+        headDiameter,
+        headLength,
+        diameter,
+        length,
+        options.clearLength,
+        options
+      );
+    },
+
+    FlatHead: function(type, length, fit, options = {}) {
+      var [headDiameter, headLength, diameter, tap, countersink] = type;
+      return Hardware.FlatHeadScrew(
+        headDiameter,
+        headLength,
+        diameter,
+        length,
+        options.clearLength,
+        options
+      );
+    }
+    // HexHead: Hardware.ScrewType(Hardware.PanHeadScrew, ...args)
+  },
+
   Clearances: {
-      tap: util.inch(-0.049),
-      close: util.inch(0.007),
-      loose: util.inch(0.016)
+    tap: util.inch(-0.049),
+    close: util.inch(0.007),
+    loose: util.inch(0.016)
   },
 
   Orientation: {
@@ -148,7 +221,7 @@ var Hardware = {
     }
   },
 
-  Screw: function(head, thread, headClearSpace, options) {
+  CreateScrew: function(head, thread, headClearSpace, options) {
     options = util.defaults(options, {
       orientation: 'up',
       clearance: [0, 0, 0]
@@ -198,7 +271,7 @@ var Hardware = {
       var headClearSpace = Parts.Cylinder(headDiameter, clearLength);
     }
 
-    return Parts.Hardware.Screw(head, thread, headClearSpace, options);
+    return Hardware.CreateScrew(head, thread, headClearSpace, options);
   },
 
   /**
@@ -225,7 +298,7 @@ var Hardware = {
       var headClearSpace = Parts.Hexagon(headDiameter, clearLength);
     }
 
-    return Parts.Hardware.Screw(head, thread, headClearSpace, options);
+    return Hardware.CreateScrew(head, thread, headClearSpace, options);
   },
 
   /**
@@ -245,7 +318,13 @@ var Hardware = {
     clearLength,
     options
   ) {
-    var head = Parts.Cone(headDiameter, diameter, headLength);
+    var a = headDiameter;
+    var b = diameter;
+    if (options && options.orientation == 'down') {
+      a = diameter;
+      b = headDiameter;
+    }
+    var head = Parts.Cone(a, b, headLength);
     // var head = Parts.Cylinder(headDiameter, headLength);
     var thread = Parts.Cylinder(diameter, length);
 
@@ -253,11 +332,11 @@ var Hardware = {
       var headClearSpace = Parts.Cylinder(headDiameter, clearLength);
     }
 
-    return Parts.Hardware.Screw(head, thread, headClearSpace, options);
+    return Hardware.CreateScrew(head, thread, headClearSpace, options);
   }
 };
 
-/* exported MetricBolts */
+/* exported MetricBolts, MetricScrews, MetricNuts */
 /**
  * http://www.atlrod.com/metric-hex-bolt-dimensions/
  * E - Body Diameter (D)
@@ -270,16 +349,16 @@ var Hardware = {
  * @type {Object}
  */
 var MetricBolts = {
-    'm10 hex': {
-        E: 10, // 10-9.78
-        tap: 8.5,
-        close: 10.5,
-        loose: 11,
-        H: 6.5, // 6.63-6.17
-        G: 18, // 18.48-17.77
-        F: 17, // 17-15.73
-        type: 'HexHeadScrew'
-    },
+  'm10 hex': {
+      E: 10, // 10-9.78
+      tap: 8.5,
+      close: 10.5,
+      loose: 11,
+      H: 6.5, // 6.63-6.17
+      G: 18, // 18.48-17.77
+      F: 17, // 17-15.73
+      type: 'HexHeadScrew'
+  },
     'm12 hex': {
         E: 12, // 12-11.73
         tap: 10.3,
@@ -290,4 +369,24 @@ var MetricBolts = {
         F: 19, // 19-17.73
         type: 'HexHeadScrew'
     }
+};
+
+// headDiameter, headLength, diameter, tap, countersink
+var MetricScrews = {
+  'm4': [8, 3.1, 4]
+};
+
+/**
+ * Dimensions of nuts for imperial bolts.
+ * F is the width across the faces, C is the width
+ * across the points, and H is the height.  D is the
+ * basic diameter.
+ *
+ * [F, C, H, D]
+ *
+ * @see https://en.wikipedia.org/wiki/Nut_(hardware)
+ * @type {Object}
+ */
+var MetricNuts = {
+  'm4': [7, 8.1, 3.2, 4]
 };

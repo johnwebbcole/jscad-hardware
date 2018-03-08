@@ -34,10 +34,10 @@
     "gulp-plumber": "^1.1.0",
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.6",
-    "gulp-openjscad-standalone": "^1.0.0"
+    "gulp-openjscad-standalone": "^1.0.0",
+    "gulp-merge": "^0.1.1"
   },
   "dependencies": {
-    "gulp-merge": "^0.1.1",
     "jscad-utils": "^3.1.2"
   }
 }

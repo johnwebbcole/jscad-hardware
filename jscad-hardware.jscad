@@ -16,7 +16,7 @@
  * @module jscad-hardware
  * @exports Hardware
  */
-var Hardware = {
+Hardware = {
   Bolt: function Bolt(length, bolt, fit, BOM) {
     fit = fit || 'loose';
 
@@ -32,9 +32,13 @@ var Hardware = {
 
     b.add(
       Parts.Hardware
-        [
-          bolt.type
-        ]((bolt.G || bolt.D) + clearance, bolt.H + clearance, bolt[fit], length, length)
+        [bolt.type](
+          (bolt.G || bolt.D) + clearance,
+          bolt.H + clearance,
+          bolt[fit],
+          length,
+          length
+        )
         .map(part => part.color('red')),
       'tap',
       false,
@@ -43,27 +47,72 @@ var Hardware = {
 
     return b;
   },
-  
+
   /**
    * Create a washer group from a washer type.
    * @param {Object} washer Washer type object.
    * @param {String} fit    Clearance to add to group (tap|close|loose).
    */
   Washer: function Washer(washer, fit) {
-      var w = util.group();
-      w.add(Parts.Tube(washer.od, washer.id, washer.thickness).color('gray'), 'washer');
-      if (fit) {
-          var tap = Hardware.Clearances[fit];
-          if (!tap) console.error(`Hardware.Washer unknown fit clearance ${fit}, should be ${Object.keys(Hardware.Clarances).join('|')}`);
-          w.add(Parts.Cylinder(washer.od + Hardware.Clearances[fit], washer.thickness).color('red'), 'clearance');
-      }
-      return w;
+    var w = util.group();
+    w.add(
+      Parts.Tube(washer.od, washer.id, washer.thickness).color('gray'),
+      'washer'
+    );
+    if (fit) {
+      var tap = Hardware.Clearances[fit];
+      if (!tap)
+        console.error(
+          `Hardware.Washer unknown fit clearance ${fit}, should be ${Object.keys(
+            Hardware.Clarances
+          ).join('|')}`
+        );
+      w.add(
+        Parts.Cylinder(
+          washer.od + Hardware.Clearances[fit],
+          washer.thickness
+        ).color('red'),
+        'clearance'
+      );
+    }
+    return w;
   },
-  
+
+  Nut: function Nut(nut, fit) {
+    return Parts.Hexagon(nut[1] + Hardware.Clearances[fit], nut[2]);
+  },
+
+  Screw: {
+    PanHead: function(type, length, fit, options = {}) {
+      var [headDiameter, headLength, diameter, tap, countersink] = type;
+      return Hardware.PanHeadScrew(
+        headDiameter,
+        headLength,
+        diameter,
+        length,
+        options.clearLength,
+        options
+      );
+    },
+
+    FlatHead: function(type, length, fit, options = {}) {
+      var [headDiameter, headLength, diameter, tap, countersink] = type;
+      return Hardware.FlatHeadScrew(
+        headDiameter,
+        headLength,
+        diameter,
+        length,
+        options.clearLength,
+        options
+      );
+    }
+    // HexHead: Hardware.ScrewType(Hardware.PanHeadScrew, ...args)
+  },
+
   Clearances: {
-      tap: util.inch(-0.049),
-      close: util.inch(0.007),
-      loose: util.inch(0.016)
+    tap: util.inch(-0.049),
+    close: util.inch(0.007),
+    loose: util.inch(0.016)
   },
 
   Orientation: {
@@ -77,7 +126,7 @@ var Hardware = {
     }
   },
 
-  Screw: function(head, thread, headClearSpace, options) {
+  CreateScrew: function(head, thread, headClearSpace, options) {
     options = util.defaults(options, {
       orientation: 'up',
       clearance: [0, 0, 0]
@@ -127,7 +176,7 @@ var Hardware = {
       var headClearSpace = Parts.Cylinder(headDiameter, clearLength);
     }
 
-    return Parts.Hardware.Screw(head, thread, headClearSpace, options);
+    return Hardware.CreateScrew(head, thread, headClearSpace, options);
   },
 
   /**
@@ -154,7 +203,7 @@ var Hardware = {
       var headClearSpace = Parts.Hexagon(headDiameter, clearLength);
     }
 
-    return Parts.Hardware.Screw(head, thread, headClearSpace, options);
+    return Hardware.CreateScrew(head, thread, headClearSpace, options);
   },
 
   /**
@@ -174,7 +223,13 @@ var Hardware = {
     clearLength,
     options
   ) {
-    var head = Parts.Cone(headDiameter, diameter, headLength);
+    var a = headDiameter;
+    var b = diameter;
+    if (options && options.orientation == 'down') {
+      a = diameter;
+      b = headDiameter;
+    }
+    var head = Parts.Cone(a, b, headLength);
     // var head = Parts.Cylinder(headDiameter, headLength);
     var thread = Parts.Cylinder(diameter, length);
 
@@ -182,6 +237,6 @@ var Hardware = {
       var headClearSpace = Parts.Cylinder(headDiameter, clearLength);
     }
 
-    return Parts.Hardware.Screw(head, thread, headClearSpace, options);
+    return Hardware.CreateScrew(head, thread, headClearSpace, options);
   }
 };
