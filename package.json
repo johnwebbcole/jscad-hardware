@@ -4,7 +4,10 @@
   "description": "jscad parts library for screws, washers and nuts",
   "main": "jscad-hardware.jscad",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "ava",
+    "build": "gulp all",
+    "start": "gulp",
+    "docs": "vuepress-jsdoc --source ./src --dist ./docs && npx vuepress build ./docs"
   },
   "keywords": [
     "jscad",
@@ -23,21 +26,51 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "del": "^2.2.0",
-    "gulp": "^3.9.1",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "@vuepress/plugin-active-header-links": "^1.0.3",
+    "@vuepress/plugin-google-analytics": "^1.0.3",
+    "ava": "^2.3.0",
+    "del": "^5.0.0",
+    "esm": "^3.2.25",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.6.0",
-    "gulp-eslint": "^3.0.1",
-    "gulp-inject": "^4.1.0",
-    "gulp-jscad-files": "^2.0.1",
+    "gulp-debug": "^4.0.0",
+    "gulp-eslint": "^6.0.0",
+    "gulp-inject": "^5.0.4",
+    "gulp-jscad-files": "^3.0.1",
     "gulp-jsdoc-to-markdown": "^1.2.1",
-    "gulp-load-plugins": "^1.2.4",
-    "gulp-plumber": "^1.1.0",
+    "gulp-merge": "^0.1.1",
+    "gulp-plumber": "^1.2.1",
+    "gulp-terser": "^1.2.0",
     "gulp-util": "^3.0.7",
-    "gulp-watch": "^4.3.6",
-    "gulp-openjscad-standalone": "^1.0.0",
-    "gulp-merge": "^0.1.1"
+    "gulp-watch": "^5.0.1",
+    "rollup": "^1.19.4",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "vuepress-jsdoc": "^1.8.1"
   },
   "dependencies": {
-    "jscad-utils": "^3.1.2"
+    "@jscad/csg": "^0.7.0",
+    "@jscad/scad-api": "^0.5.1",
+    "@jwc/jscad-utils": "^4.1.1"
+  },
+  "ava": {
+    "files": [
+      "test/**/*.js",
+      "!test/helpers/**/*.js"
+    ],
+    "sources": [
+      "src/**/*.js"
+    ],
+    "require": [
+      "@babel/register"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   }
 }

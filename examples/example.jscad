@@ -1,30 +1,33 @@
-
 function main() {
   util.init(CSG);
 
-  var ibolts = makeSet(makeBolt, ImperialBolts, -15, 25);
-  var iwasher = makeSet(makeWasher, ImperialWashers, -50, 45);
-  var iwood = makeSet(makeWoodScrew, ImperialWoodScrews, -75, 25);
-  
-  
-  var mbolts =makeSet(makeBolt, MetricBolts, 15, 25); 
-  
+  var ibolts = makeSet(makeBolt, ImperialBolts);
+  var iwood = makeSet(makeWoodScrew, ImperialWoodScrews);
+  var mbolts = makeSet(makeBolt, MetricBolts);
+  var iwasher = makeSet(makeWasher, ImperialWashers);
 
-  return [union(iwood).center('x'),
-  union(ibolts).center('x'),
-  union(iwasher).center('x'), union(mbolts).center('x')];
+  return [
+    union(ibolts)
+      .center('x')
+      .translate([0, -50, 0]),
+    union(iwood)
+      .center('x')
+      .translate([0, -25, 0]),
+    union(mbolts)
+      .center('x')
+      .translate([0, 0, 0]),
+    union(iwasher)
+      .center('x')
+      .translate([0, 50, 0])
+  ];
 }
 
 function makeWasher(washer) {
-  return Hardware.Washer(washer).combine(
-    'washer'
-  );
+  return Hardware.Washer(washer).combine('washer');
 }
 
 function makeBolt(bolt) {
-  return Hardware.Bolt(util.inch(1), bolt).combine(
-    'head,thread'
-  );
+  return Hardware.Bolt(util.inch(1), bolt).combine('head,thread');
 }
 
 function makeWoodScrew(args) {
@@ -33,20 +36,37 @@ function makeWoodScrew(args) {
 }
 
 function makeSet(maker, set, offset, width) {
-  return Object.keys(set).map(function(key, idx) {
-    var bolt = maker(set[key])
+  var g = util.group();
+  Object.keys(set)
+    .sort(function(a, b) {
+      return (set[a].E || set[a].od) > (set[b].E || set[b].od) ? 1 : -1;
+    })
+    .slice(0, 10)
+    .forEach(function(key, idx) {
+      var item = maker(set[key]);
+      if (idx == 0) {
+        g.add(item.translate([0, 0, 0]), key);
+      } else {
+        var gsize = util.size(g.combine());
+        var isize = util.size(item);
+        g.add(item.translate([gsize.x + isize.x / 2, 0, 0]), key);
+      }
+      // var gsize = util.size(g.combine());
+      // g.translate([gsize.x, 0, 0]);
 
-    // var label = util
-    //   .label(key)
-    //   .fit([width - 5, 10, 10], true)
-    //   .rotateX(90)
-    //   .rotateZ(180)
-    //   .snap(bolt, 'z', 'outside-')
-    //   .align(bolt, 'xy')
-    //   .translate([0,0,5]);
+      // var label = util
+      //   .label(key)
+      //   .fit([width - 5, 10, 10], true)
+      //   .rotateX(90)
+      //   .rotateZ(180)
+      //   .snap(item, 'z', 'outside-')
+      //   .align(item, 'xy')
+      //   .translate([0,0,5]);
 
-    return bolt.translate([width * idx, offset, 0]);
-  });
+      // return item.translate([width * idx, offset, 0]);
+    });
+
+  return g.combine();
 }
 
 // include:js

@@ -1,0 +1,12 @@
+image: node:lts-alpine
+
+pages:
+  script:
+    - npm ci
+    - npm run docs
+    - ls -al -R public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
