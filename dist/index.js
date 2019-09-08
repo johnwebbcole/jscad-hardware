@@ -1,11 +1,9 @@
 /* 
- * jscad-hardware version 1.1.0 
+ * @jwc/jscad-hardware version 2.0.0 
  * https://github.com/johnwebbcole/jscad-hardware
  */
-var jscadHardware = (function (exports, csg, jscadUtils) {
+var jscadHardware = (function (exports, jscadUtils) {
   'use strict';
-
-  csg = csg && csg.hasOwnProperty('default') ? csg['default'] : csg;
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -200,6 +198,7 @@ var jscadHardware = (function (exports, csg, jscadUtils) {
   };
   function CreateScrew(head, thread, headClearSpace) {
     var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    console.warn('head', head);
     options = Object.assign(options, {
       orientation: 'up',
       clearance: [0, 0, 0]
@@ -632,5 +631,5 @@ var jscadHardware = (function (exports, csg, jscadUtils) {
 
   return exports;
 
-}({}, jsCadCSG, jscadUtils));
-/* jscad-hardware follow me on Twitter! @johnwebbcole */
+}({}, jscadUtils));
+/* @jwc/jscad-hardware follow me on Twitter! @johnwebbcole */

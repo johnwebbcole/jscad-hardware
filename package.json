@@ -54,7 +54,7 @@
   "dependencies": {
     "@jscad/csg": "^0.7.0",
     "@jscad/scad-api": "^0.5.1",
-    "@jwc/jscad-utils": "^4.1.1"
+    "@jwc/jscad-utils": "^4.1.4"
   },
   "ava": {
     "files": [
@@ -65,7 +65,10 @@
       "src/**/*.js"
     ],
     "require": [
-      "@babel/register"
+      "esm",
+      "@babel/register",
+      "babel-polyfill",
+      "./test/helpers/compat-env.js"
     ]
   },
   "babel": {

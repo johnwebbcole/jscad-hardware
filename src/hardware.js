@@ -1,4 +1,3 @@
-import jsCadCSG from '@jscad/csg';
 import { util, Group, parts as Parts, Debug } from '@jwc/jscad-utils';
 const debug = Debug('jscadHardware:hardware');
 /* exported Hardware */
@@ -132,6 +131,7 @@ export const Orientation = {
 };
 
 export function CreateScrew(head, thread, headClearSpace, options = {}) {
+  console.warn('head', head);
   options = Object.assign(options, {
     orientation: 'up',
     clearance: [0, 0, 0]
