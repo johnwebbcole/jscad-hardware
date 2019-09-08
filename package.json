@@ -1,6 +1,6 @@
 {
   "name": "@jwc/jscad-hardware",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "jscad parts library for screws, washers and nuts",
   "main": "jscad-hardware.jscad",
   "scripts": {
