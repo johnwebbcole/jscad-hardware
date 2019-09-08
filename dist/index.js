@@ -1,5 +1,5 @@
 /* 
- * @jwc/jscad-hardware version 2.0.0 
+ * @jwc/jscad-hardware version 2.0.1 
  * https://github.com/johnwebbcole/jscad-hardware
  */
 var jscadHardware = (function (exports, jscadUtils) {

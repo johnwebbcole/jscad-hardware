@@ -54,7 +54,7 @@
   "dependencies": {
     "@jscad/csg": "^0.7.0",
     "@jscad/scad-api": "^0.5.1",
-    "@jwc/jscad-utils": "^4.2.0"
+    "@jwc/jscad-utils": "^4.2.1"
   },
   "ava": {
     "files": [
